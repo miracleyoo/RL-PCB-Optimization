@@ -1,5 +1,5 @@
 # coding: utf-8
-# Author: Zhongyang Zhang
+# Author: Zhongyang Zhang, Ling Zhang
 # Email : mirakuruyoo@gmail.com
 
 import numpy as np
