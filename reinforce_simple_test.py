@@ -1,15 +1,11 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Sep 10 22:09:54 2018
-
-@author: lzd76
-"""
+# coding: utf-8
+# Author: Zhongyang Zhang
+# Email : mirakuruyoo@gmail.com
 
 import numpy as np
 import matplotlib.pyplot as plt
 from copy import deepcopy
 from collections import deque
-# %matplotlib inline
 
 import torch
 import torch.nn as nn
@@ -18,7 +14,6 @@ import torch.optim as optim
 from torch.distributions import Categorical
 
 torch.manual_seed(0)  # set random seed
-
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
@@ -42,10 +37,6 @@ class Policy(nn.Module):
         m = Categorical(probs)
         action = m.sample()
         return action.item(), m.log_prob(action)
-
-
-policy = Policy().to(device)
-optimizer = optim.Adam(policy.parameters(), lr=1e-4)
 
 
 def zf(x, y):
@@ -73,7 +64,7 @@ def take_action(state1, action):
     return state2, reward_, done
 
 
-def reinforce(n_episodes=1000, max_t=100, gamma=0.95, print_every=10):
+def reinforce(optimizer, policy, n_episodes=1000, max_t=100, gamma=0.95, print_every=10):
     scores_deque = deque(maxlen=100)
     scores = []
     for i_episode in range(1, n_episodes + 1):
@@ -112,7 +103,9 @@ def reinforce(n_episodes=1000, max_t=100, gamma=0.95, print_every=10):
 
 
 def main():
-    scores = reinforce()
+    policy = Policy().to(device)
+    optimizer = optim.Adam(policy.parameters(), lr=1e-4)
+    scores = reinforce(optimizer=optimizer, policy=policy)
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
