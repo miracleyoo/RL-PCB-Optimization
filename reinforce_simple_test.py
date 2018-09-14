@@ -75,8 +75,11 @@ class Policy(nn.Module):
 
 
 def zf(x, y):
-    z = x * x + y * y
-    return z
+    x = 0.01*x
+    y = 0.01*y
+    r = np.sqrt(x**2+y**2)
+    z = np.sin(x**2+3*y**2)/(0.1+r**2)+(x**2+5*y**2)*np.exp(1-r**2)/2
+    return -z*1000
 
 
 # define take action function
@@ -92,14 +95,14 @@ def take_action(state1, action, t, decay=0.8):
     else:
         state2[1] = state1[1] - max(np.floor(5*decay**t), 1)
     reward_ = zf(state1[0], state1[1])-zf(state2[0], state2[1])
-    if (state2[0] == 0) and (state2[1] == 0):
+    if zf(state2[0], state2[1]) >= 2.55:
         done = True
     else:
         done = False
     return state2, reward_, done
 
 
-def reinforce(optimizer, policy, n_episodes=1000, max_t=100, gamma=0.95, print_every=10):
+def reinforce(optimizer, policy, n_episodes=2000, max_t=100, gamma=0.95, print_every=10):
     scores_deque = deque(maxlen=100)
     scores = []
     for i_episode in range(1, n_episodes + 1):
