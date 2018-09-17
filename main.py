@@ -15,15 +15,6 @@ import os
 warnings.filterwarnings("ignore")
 
 
-def to_multi(model, device):
-    # Data Parallelism
-    if torch.cuda.device_count() > 1:
-        print("==> Using", torch.cuda.device_count(), "GPUs.")
-        model = torch.nn.DataParallel(model)
-    model.to(device)
-    return model
-
-
 def main():
     folder_init(opt)
     pre_epoch = 0
@@ -43,7 +34,7 @@ def main():
 
     # Instantiation of tensorboard and add net graph to it
     writer = SummaryWriter(opt.SUMMARY_PATH)
-    dummy_input = wrap_np(np.random.randint(-20, 20, (2,)), device)
+    dummy_input = wrap_np(np.random.randint(opt.LOW_BOND, opt.HIGH_BOND, opt.NUM_VARIABLE), device)
     writer.add_graph(policy, dummy_input)
 
     if opt.LOAD_SAVED_MOD:
@@ -54,13 +45,15 @@ def main():
     # Start training or testing
     if not opt.MASS_TESTING:
         policy = training(opt, writer, policy, device, pre_epoch)
-        testing(policy, device)
+        testing(opt, policy, device)
     else:
         steps = []
+        time_elapsed = []
         for i in range(opt.TEST_EPOCH):
-            step = testing(policy, device)
-            steps.append(step)
-        print("Average step: %d" % (sum(steps) // opt.TEST_EPOCH))
+            with Timer(time_elapsed=time_elapsed, name='testing') as timer:
+                step = testing(opt, policy, device)
+        print("Average step: %d" %
+              (sum(steps) // opt.TEST_EPOCH))
 
 
 def str2bool(b):

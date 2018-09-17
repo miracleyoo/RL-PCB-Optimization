@@ -3,12 +3,11 @@
 # Email : mirakuruyoo@gmail.com
 
 import os
-import scipy.io
-import pickle
-import h5py
+import time
 import warnings
 warnings.filterwarnings("ignore")
 warnings.filterwarnings("ignore", category=DeprecationWarning)
+__all__ = ['folder_init', 'Timer']
 
 
 def folder_init(opt):
@@ -25,3 +24,17 @@ def folder_init(opt):
         os.mkdir('./source/val_results/')
     if not os.path.exists(opt.NET_SAVE_PATH):
         os.mkdir(opt.NET_SAVE_PATH)
+
+
+class Timer(object):
+    def __init__(self, time_elapsed=0, name=None):
+        self.name = name
+        self.time_elapsed = time_elapsed
+
+    def __enter__(self):
+        self.tstart = time.time()
+
+    def __exit__(self, type, value, traceback):
+        print('==> [%s]:\t' % self.name, end='')
+        self.time_elapsed = time.time() - self.tstart
+        print('Elapsed Time: %s (s)' % self.time_elapsed)

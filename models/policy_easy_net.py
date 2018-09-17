@@ -11,8 +11,11 @@ torch.manual_seed(1)
 
 
 class PolicyEasyNet(BasicModule):
-    def __init__(self, s_size=2, h_size=32, a_size=4):
+    def __init__(self, opt):
         super(PolicyEasyNet, self).__init__()
+        s_size = opt.NUM_VARIABLE
+        h_size = 32
+        a_size = opt.NUM_VARIABLE*2
         self.fc1 = nn.Linear(s_size, h_size)
         self.fc2 = nn.Linear(h_size, h_size)
         self.fc3 = nn.Linear(h_size, a_size)
