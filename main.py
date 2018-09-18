@@ -34,7 +34,7 @@ def main():
 
     # Instantiation of tensorboard and add net graph to it
     writer = SummaryWriter(opt.SUMMARY_PATH)
-    dummy_input = wrap_np(np.random.randint(opt.LOW_BOND, opt.HIGH_BOND, opt.NUM_VARIABLE), device)
+    dummy_input = wrap_np(gen_rand_data(opt), device)
     writer.add_graph(policy, dummy_input)
 
     if opt.LOAD_SAVED_MOD:
@@ -44,7 +44,7 @@ def main():
 
     # Start training or testing
     if not opt.MASS_TESTING:
-        policy = training(opt, writer, policy, device, pre_epoch)
+        policy = training(opt, writer, policy, device, pre_epoch=pre_epoch)
         testing(opt, policy, device)
     else:
         steps = []

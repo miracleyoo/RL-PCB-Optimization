@@ -3,6 +3,7 @@
 # Email : mirakuruyoo@gmail.com
 
 import torch
+from z_functions import *
 
 
 class Config(object):
@@ -21,8 +22,6 @@ class Config(object):
         self.MOST_BEAR_STEP      = 300
         self.QUEUE_LENGTH        = 100
         self.TEST_EPOCH          = 100
-        self.LOW_BOND            = -20
-        self.HIGH_BOND           = 20
         self.CRITERION           = 0
         self.GAMMA               = 0.95
         self.LEARNING_RATE       = 1e-4
@@ -32,4 +31,5 @@ class Config(object):
         self.BATCH_SIZE          = 512
         self.TEST_BATCH_SIZE     = 512
         self.NUM_WORKERS         = 0
+        self.ZC                  = X2Y2()
         self.BOUNDARY            = [[-20, 20], [-20, 20]]

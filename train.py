@@ -8,57 +8,36 @@ from collections import deque
 import torch.autograd
 import numpy as np
 
-__all__ = ['training', 'testing', 'wrap_np', 'np']
+__all__ = ['training', 'testing', 'wrap_np', 'np', 'gen_rand_data']
 
 
 def wrap_np(state, device):
     return torch.from_numpy(state[np.newaxis, :]).float().unsqueeze(0).to(device)
 
 
-# def zf(state):
-#     x = state[0] * 0.1
-#     y = state[1] * 0.1
-#     r = np.sqrt(x ** 2 + y ** 2)
-#     z = np.sin(x ** 2 + 3 * y ** 2) / (0.1 + r ** 2) + (x ** 2 + 5 * y ** 2) * np.exp(1 - r ** 2) / 2
-#     return -z * 1000
-def zf(state):
-    return state[0]**2+state[1]**2
+def gen_rand_data(opt):
+    state = []
+    for bc in opt.ZC.boundary:
+        state.append(np.random.randint(bc[0], bc[1]))
+    state = np.array(state)
+    return state
 
 
 # define take action function
-# def take_action(opt, state1, action, t, decay=0.8):
-#     # action 0: x plus 0.1; action 1: x minus 0.1; action 2: y plus 0.1; action 3: y minus 0.1
-#     state2 = deepcopy(state1)
-#     if action == 0:
-#         state2[0] = state1[0] + max(np.floor(5 * decay ** t), 1)
-#     elif action == 1:
-#         state2[0] = state1[0] - max(np.floor(5 * decay ** t), 1)
-#     elif action == 2:
-#         state2[1] = state1[1] + max(np.floor(5 * decay ** t), 1)
-#     else:
-#         state2[1] = state1[1] - max(np.floor(5 * decay ** t), 1)
-#     reward_ = zf(state1) - zf(state2)
-#     if zf(state2) <= opt.CRITERION:
-#         done = True
-#         print("==> Terminate. %d steps used." % t)
-#     else:
-#         done = False
-#     return state2, reward_, done
-
 def take_action(opt, state1, action, t):
     index = action // 2
     act = action % 2
     state2 = deepcopy(state1)
     if act == 0:
         state2[index] -= max(np.floor(5 * opt.STEP_DECAY ** t), 1)
-        if state2[index] < opt.BOUNDARY[index][0]:
+        if state2[index] < opt.ZC.boundary[index][0]:
             state2[index] += 2*max(np.floor(5 * opt.STEP_DECAY ** t), 1)
     else:
         state2[index] += max(np.floor(5 * opt.STEP_DECAY ** t), 1)
-        if state2[index] > opt.BOUNDARY[index][1]:
+        if state2[index] > opt.ZC.boundary[index][1]:
             state2[index] -= 2*max(np.floor(5 * opt.STEP_DECAY ** t), 1)
-    reward_ = zf(state1) - zf(state2)
-    if zf(state2) <= opt.CRITERION:
+    reward_ = opt.ZC.zf(state1) - opt.ZC.zf(state2)
+    if opt.ZC.zf(state2) <= opt.CRITERION:
         done = True
         print("==> Terminate. %d steps used." % t)
     else:
@@ -73,7 +52,8 @@ def training(opt, writer, policy, device, pre_epoch=0):
         saved_log_probs = []
         rewards = []
         # initial state for x and y
-        state = np.random.randint(opt.LOW_BOND, opt.HIGH_BOND, opt.NUM_VARIABLE)
+        # state = np.random.randint(opt.LOW_BOND, opt.HIGH_BOND, opt.NUM_VARIABLE)
+        state = gen_rand_data(opt)
         for t in range(opt.MOST_BEAR_STEP):
             action, log_prob = policy.act(wrap_np(state, device))
             saved_log_probs.append(log_prob)
@@ -109,7 +89,9 @@ def training(opt, writer, policy, device, pre_epoch=0):
 
 
 def testing(opt, policy, device):
-    state = np.random.randint(opt.LOW_BOND, opt.HIGH_BOND, opt.NUM_VARIABLE)
+    # state = np.random.randint(opt.LOW_BOND, opt.HIGH_BOND, opt.NUM_VARIABLE)
+    state = gen_rand_data(opt)
+
     init_state = deepcopy(state)
     action, _ = policy.act(wrap_np(state, device))
     state, reward, done = take_action(opt, state, action, 0)
@@ -119,7 +101,7 @@ def testing(opt, policy, device):
         state, reward, done = take_action(opt, state, action, step)
         if done:
             print("==> Starting from (%.2f, %.2f). Use %d steps to terminate(%.2f, %.2f), max=%.2f." %
-                  (init_state[0], init_state[1], step, state[0], state[1], -zf(state)/1000))
+                  (init_state[0], init_state[1], step, state[0], state[1], -opt.ZC.zf(state)/1000))
             break
     print("==> Testing finished.")
     return step
