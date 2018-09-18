@@ -3,9 +3,6 @@
 # Email : mirakuruyoo@gmail.com
 
 import torch
-import os
-
-# os.environ["CUDA_VISIBLE_DEVICES"] = "1,2"
 
 
 class Config(object):
@@ -14,24 +11,25 @@ class Config(object):
         self.LOAD_SAVED_MOD      = True
         self.SAVE_TEMP_MODEL     = True
         self.SAVE_BEST_MODEL     = True
-        self.MASS_TESTING        = True
+        self.MASS_TESTING        = False
         self.NET_SAVE_PATH       = "./source/trained_net/"
         self.MODEL               = 'PolicyConvNet'
-        self.PROCESS_ID          = 'Contours_0.1-Interval-Complex_Basic-New'
+        self.PROCESS_ID          = 'xxyy_300_B.C.'
         self.SUMMARY_PATH        = "./source/summary/"+self.MODEL+'_'+self.PROCESS_ID
         self.NUM_VARIABLE        = 2
-        self.NUM_EPOCHS          = 5000
+        self.NUM_EPOCHS          = 2000
         self.MOST_BEAR_STEP      = 300
         self.QUEUE_LENGTH        = 100
         self.TEST_EPOCH          = 100
         self.LOW_BOND            = -20
         self.HIGH_BOND           = 20
-        self.CRITERION           = -3650
+        self.CRITERION           = 0
         self.GAMMA               = 0.95
         self.LEARNING_RATE       = 1e-4
-        self.STEP_DECAY          = 0.7
+        self.STEP_DECAY          = 0.8
         self.PRINT_EVERY         = 50
 
         self.BATCH_SIZE          = 512
         self.TEST_BATCH_SIZE     = 512
         self.NUM_WORKERS         = 0
+        self.BOUNDARY            = [[-20, 20], [-20, 20]]
