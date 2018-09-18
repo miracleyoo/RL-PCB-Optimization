@@ -48,12 +48,10 @@ def main():
         testing(opt, policy, device)
     else:
         steps = []
-        time_elapsed = []
         for i in range(opt.TEST_EPOCH):
-            with Timer(time_elapsed=time_elapsed, name='testing') as timer:
-                step = testing(opt, policy, device)
-        print("Average step: %d" %
-              (sum(steps) // opt.TEST_EPOCH))
+            with Timer(name='testing'):
+                steps.append(testing(opt, policy, device))
+        print("Average step: %d" % (sum(steps) // opt.TEST_EPOCH))
 
 
 def str2bool(b):

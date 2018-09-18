@@ -14,7 +14,7 @@ class Config(object):
         self.LOAD_SAVED_MOD      = True
         self.SAVE_TEMP_MODEL     = True
         self.SAVE_BEST_MODEL     = True
-        self.MASS_TESTING        = False
+        self.MASS_TESTING        = True
         self.NET_SAVE_PATH       = "./source/trained_net/"
         self.MODEL               = 'PolicyConvNet'
         self.PROCESS_ID          = 'Contours_0.1-Interval-Complex_Basic-New'
