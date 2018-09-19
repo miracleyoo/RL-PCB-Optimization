@@ -25,10 +25,10 @@ class PolicyConvNet(BasicModule):
             nn.LeakyReLU(),
         )
         self.fc = nn.Sequential(
-            nn.Linear(512*opt.NUM_VARIABLE, 128),
+            nn.Linear(512*len(opt.ZC.boundary), 128),
             nn.LeakyReLU(),
             nn.Dropout(0.5),
-            nn.Linear(128, opt.NUM_VARIABLE*2)
+            nn.Linear(128, len(opt.ZC.boundary)*2)
         )
         self.softmax = nn.Softmax()
 

@@ -28,11 +28,11 @@ class X2Y2:
 
 class Hartman:
     def __init__(self):
-        self.boundary = [[-2e5, 2e5], [-2e5, 2e5], [-2e5, 2e5], [-2e5, 2e5], [-2e5, 2e5], [-2e5, 2e5]]
+        self.boundary = [[0, 1e3], [0, 1e3], [0, 1e3], [0, 1e3], [0, 1e3], [0, 1e3]]
 
     @staticmethod
     def zf(state):
-        state *= 1e-4
+        state_zf = state*1e-3
         alpha = np.array([1.0, 1.2, 3.0, 3.2])[:, np.newaxis]
         a_cap = np.array([
             [10, 3, 17, 3.5, 1.7, 8],
@@ -49,8 +49,8 @@ class Hartman:
         for i in range(4):
             temp = 0
             for j in range(6):
-                temp = a_cap[i, j] * (state[j] - p_cap[i, j]) ** 2
+                temp = a_cap[i, j] * (state_zf[j] - p_cap[i, j]) ** 2
             temp *= -1
             result += alpha[i] * np.exp(temp)
         result *= -1
-        return result
+        return result * 1000

@@ -19,7 +19,7 @@ def gen_rand_data(opt):
     state = []
     for bc in opt.ZC.boundary:
         state.append(np.random.randint(bc[0], bc[1]))
-    state = np.array(state)
+    state = np.array(state).astype('float64')
     return state
 
 
@@ -29,13 +29,13 @@ def take_action(opt, state1, action, t):
     act = action % 2
     state2 = deepcopy(state1)
     if act == 0:
-        state2[index] -= max(np.floor(5 * opt.STEP_DECAY ** t), 1)
+        state2[index] -= max(np.floor(opt.START_STEP * opt.STEP_DECAY ** t), opt.MIN_STEP)
         if state2[index] < opt.ZC.boundary[index][0]:
-            state2[index] += 2*max(np.floor(5 * opt.STEP_DECAY ** t), 1)
+            state2[index] += 2*max(np.floor(opt.START_STEP * opt.STEP_DECAY ** t), opt.MIN_STEP)
     else:
-        state2[index] += max(np.floor(5 * opt.STEP_DECAY ** t), 1)
+        state2[index] += max(np.floor(opt.START_STEP * opt.STEP_DECAY ** t), opt.MIN_STEP)
         if state2[index] > opt.ZC.boundary[index][1]:
-            state2[index] -= 2*max(np.floor(5 * opt.STEP_DECAY ** t), 1)
+            state2[index] -= 2*max(np.floor(opt.START_STEP * opt.STEP_DECAY ** t), opt.MIN_STEP)
     reward_ = opt.ZC.zf(state1) - opt.ZC.zf(state2)
     if opt.ZC.zf(state2) <= opt.CRITERION:
         done = True
@@ -52,7 +52,6 @@ def training(opt, writer, policy, device, pre_epoch=0):
         saved_log_probs = []
         rewards = []
         # initial state for x and y
-        # state = np.random.randint(opt.LOW_BOND, opt.HIGH_BOND, opt.NUM_VARIABLE)
         state = gen_rand_data(opt)
         for t in range(opt.MOST_BEAR_STEP):
             action, log_prob = policy.act(wrap_np(state, device))
@@ -63,8 +62,8 @@ def training(opt, writer, policy, device, pre_epoch=0):
                 break
         scores_deque.append(sum(rewards))
 
-        discounts = [opt.GAMMA ** i for i in range(len(rewards) + 1)]
-        R = sum([a * b for a, b in zip(discounts, rewards)])
+        discounts = [opt.GAMMA ** i for i in range(len(rewards))]
+        R = np.array([a * b for a, b in zip(discounts, rewards)]).sum()
 
         policy_loss = []
         for log_prob in saved_log_probs:
@@ -103,5 +102,8 @@ def testing(opt, policy, device):
             print("==> Starting from (%.2f, %.2f). Use %d steps to terminate(%.2f, %.2f), max=%.2f." %
                   (init_state[0], init_state[1], step, state[0], state[1], -opt.ZC.zf(state)/1000))
             break
-    print("==> Testing finished.")
+    print("==> Starting from (%.2f, %.2f). Use %d steps to terminate(%.2f, %.2f), max=%.2f." %
+          (init_state[0], init_state[1], step, state[0], state[1], opt.ZC.zf(state) / 100))
+    print(init_state,state)
+    # print("==> Testing finished.")
     return step
