@@ -94,7 +94,6 @@ class BasicModule(nn.Module):
         self.threads.append(MyThread(self.opt, self, epoch, self.best_score, score))
         self.threads[-1].start()
         if self.opt.SAVE_BEST_MODEL and score > self.best_score:
-            print("==> Your best model is renewed")
             self.best_score = score
 
     def get_optimizer(self, lr):
@@ -107,6 +106,7 @@ class BasicModule(nn.Module):
             print("==> Using", torch.cuda.device_count(), "GPUs.")
             if torch.cuda.device_count() > 1:
                 self = torch.nn.DataParallel(self)
+                print("==> Using data parallelism.")
         else:
             print("==> Using CPU now.")
         self.to(device)
