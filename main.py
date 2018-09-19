@@ -40,7 +40,10 @@ def main():
     # Instantiation of tensorboard and add net graph to it
     writer = SummaryWriter(opt.SUMMARY_PATH)
     dummy_input = wrap_np(gen_rand_data(opt), device)
-    writer.add_graph(policy, dummy_input)
+    try:
+        writer.add_graph(policy, dummy_input)
+    except KeyError:
+        writer.add_graph(policy.module, dummy_input)
 
     # Start training or testing
     if not opt.MASS_TESTING:
