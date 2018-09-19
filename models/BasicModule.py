@@ -75,10 +75,10 @@ class BasicModule(nn.Module):
             name = "temp_model.dat"
 
         path = prefix + name
-        if torch.cuda.device_count() > 1:
-            state_dict = self.module.state_dict()
-        else:
+        try:
             state_dict = self.state_dict()
+        except:
+            state_dict = self.module.state_dict()
         torch.save({
             'epoch': epoch + 1,
             'state_dict': state_dict,
