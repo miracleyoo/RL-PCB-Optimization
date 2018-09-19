@@ -24,9 +24,9 @@ def main():
     # Initialize model chosen
     try:
         if opt.MODEL == 'PolicyConvNet':
-            policy = policy_conv_net.PolicyConvNet(opt).to_multi(device)
+            policy = policy_conv_net.PolicyConvNet(opt)
         elif opt.MODEL == 'PolicyEasyNet':
-            policy = policy_easy_net.PolicyEasyNet(opt).to_multi(device)
+            policy = policy_easy_net.PolicyEasyNet(opt)
     except KeyError('==> Your model is not found.'):
         exit(0)
     else:
