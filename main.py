@@ -35,7 +35,7 @@ def main():
     if opt.LOAD_SAVED_MOD:
         policy, pre_epoch, best_score = policy.load(map_location=device.type)
     policy.best_score = best_score
-    policy.to_multi(device=device)
+    policy = policy.to_multi(device=device)
 
     # Instantiation of tensorboard and add net graph to it
     writer = SummaryWriter(opt.SUMMARY_PATH)
