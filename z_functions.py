@@ -6,7 +6,8 @@ import numpy as np
 
 class Contours:
     def __init__(self):
-        self.boundary = [[-30, 30], [-30, 30]]
+        self.boundary  = [[-30, 30], [-30, 30]]
+        self.criterion = -2630
 
     @staticmethod
     def zf(state):
@@ -19,7 +20,8 @@ class Contours:
 
 class X2Y2:
     def __init__(self):
-        self.boundary = [[-20, 20], [-20, 20]]
+        self.boundary  = [[-20, 20], [-20, 20]]
+        self.criterion = -1e4
 
     @staticmethod
     def zf(state):
@@ -28,7 +30,8 @@ class X2Y2:
 
 class Hartman:
     def __init__(self):
-        self.boundary = [[0, 1e3], [0, 1e3], [0, 1e3], [0, 1e3], [0, 1e3], [0, 1e3]]
+        self.boundary  = [[0, 1e3], [0, 1e3], [0, 1e3], [0, 1e3], [0, 1e3], [0, 1e3]]
+        self.criterion = 1e8
 
     @staticmethod
     def zf(state):

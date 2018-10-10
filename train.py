@@ -37,7 +37,7 @@ def take_action(opt, state1, action, t):
         if state2[index] > opt.ZC.boundary[index][1]:
             state2[index] -= 2*max(np.floor(opt.START_STEP * opt.STEP_DECAY ** t), opt.MIN_STEP)
     reward_ = opt.ZC.zf(state1) - opt.ZC.zf(state2)
-    if opt.ZC.zf(state2) <= opt.CRITERION:
+    if opt.ZC.zf(state2) <= opt.ZC.criterion:
         done = True
         print("==> Terminate. %d steps used." % t)
     else:

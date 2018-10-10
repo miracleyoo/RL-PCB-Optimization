@@ -15,7 +15,7 @@ class Config(object):
         self.MASS_TESTING        = False
         self.NET_SAVE_PATH       = "./source/trained_net/"
         self.MODEL               = 'PolicyConvNet'
-        self.PROCESS_ID          = 'Hartman_300_B.C._1e3'
+        self.PROCESS_ID          = 'Contours_300_B.C.For_show_1'
         self.SUMMARY_PATH        = "./source/summary/"+self.MODEL+'_'+self.PROCESS_ID
         self.NUM_VARIABLE        = 6
         self.NUM_EPOCHS          = 100000
@@ -33,4 +33,4 @@ class Config(object):
         self.BATCH_SIZE          = 512
         self.TEST_BATCH_SIZE     = 512
         self.NUM_WORKERS         = 0
-        self.ZC                  = Hartman()
+        self.ZC                  = Contours()
